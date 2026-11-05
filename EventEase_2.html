@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EventEase</title>
+<style>
+:root {
+  --site-primary: #6F1028;
+  --site-on-primary: #FFFFFF;
+  --site-secondary: #F0DDE2;
+  --site-on-secondary: #48101F;
+  --site-background: #FFF9FA;
+  --site-on-background: #32131C;
+  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-heading: Georgia, "Times New Roman", serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  color-scheme: light dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--site-font-body); background: var(--site-background); color: var(--site-on-background); }
+#app { min-height: 100vh; width: 100%; border-radius: 0; background-color: light-dark(var(--site-background), #21171A); color: light-dark(var(--site-on-background), #F8EDEF); }
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+.nav { display:flex; align-items:center; justify-content:space-between; gap:20px; padding: calc(18px * var(--site-spacing-scale)) clamp(18px,5vw,72px); background:var(--site-primary); color:var(--site-on-primary); }
+.brand { display:flex; align-items:center; gap:11px; font-weight:800; letter-spacing:.2px; font-size:1.12rem; }
+.brand-mark { width:37px;height:37px;border-radius:12px;background:#fff;color:var(--site-primary);display:grid;place-items:center;font-weight:900;font-size:20px; }
+.university-brand { display:flex;align-items:center;gap:12px;min-width:0; }
+.university-seal { width:58px;height:58px;flex:none;object-fit:contain;border-radius:50%;background:#F6C65B; }
+.university-name { display:flex;flex-direction:column;gap:2px;line-height:1.15; }
+.university-name strong { font-size:.9rem;letter-spacing:.3px; }
+.university-name small { font-size:.65rem;opacity:.86;font-weight:600;letter-spacing:.7px; }
+.nav-brand-wrap { display:flex;align-items:center;gap:13px; }
+.nav-divider { height:38px;width:1px;background:rgba(255,255,255,.35); }
+.lookup-box { margin-top:18px;padding:16px;border:1px solid light-dark(#EBDCE0,#49343B);border-radius:12px;background:light-dark(#FFFAFB,#251B1F); }
+.lookup-box h4 { margin:0 0 6px;font-size:1rem; }
+.lookup-controls { display:flex;gap:8px;margin-top:11px; }
+.lookup-controls input { flex:1;min-width:0; }
+.lookup-result { margin-top:10px;font-size:.86rem;line-height:1.5; }
+.chat-launch { position:fixed;right:22px;bottom:22px;z-index:20;border:0;border-radius:999px;padding:14px 19px;background:var(--site-primary);color:#fff;font-weight:800;box-shadow:0 8px 25px rgba(50,10,25,.25); }
+.chat-panel { display:none;position:fixed;right:22px;bottom:84px;width:min(360px,calc(100vw - 32px));height:440px;max-height:65vh;z-index:21;background:light-dark(#fff,#2C2024);border:1px solid light-dark(#EBDCE0,#49343B);border-radius:16px;box-shadow:0 15px 45px rgba(30,5,15,.25);overflow:hidden;flex-direction:column; }
+.chat-panel.open { display:flex; }
+.chat-head { padding:14px 16px;background:var(--site-primary);color:#fff;display:flex;justify-content:space-between;align-items:center; }
+.chat-head button { border:0;background:transparent;color:#fff;font-size:20px; }
+.chat-messages { padding:14px;display:flex;flex-direction:column;gap:10px;overflow:auto;flex:1;font-size:.88rem; }
+.chat-bubble { padding:10px 12px;border-radius:12px;max-width:88%;line-height:1.45;background:light-dark(#F5E9ED,#443039);align-self:flex-start; }
+.chat-bubble.user { background:var(--site-primary);color:#fff;align-self:flex-end; }
+.chat-form { display:flex;gap:7px;padding:11px;border-top:1px solid light-dark(#EBDCE0,#49343B); }
+.chat-form input { min-width:0;flex:1; }
+.chat-form button { border:0;border-radius:9px;background:var(--site-primary);color:#fff;padding:0 13px;font-weight:750; }
+.nav-links { display:flex; gap:24px; align-items:center; }
+.nav-links a { color:#fff; text-decoration:none; opacity:.9; font-size:.9rem; }
+.nav-links a:hover { opacity:1; text-decoration:underline; }
+.nav-cta { background:#fff;color:var(--site-primary);border:0;border-radius:999px;padding:10px 17px;font-weight:750; }
+.hero { position:relative; overflow:hidden; padding:clamp(48px,8vw,94px) clamp(20px,8vw,112px); background:var(--site-secondary); color:var(--site-on-secondary); }
+.hero:after { content:""; position:absolute; width:340px;height:340px;border:1px solid rgba(111,16,40,.13);border-radius:50%;right:-90px;top:-160px;box-shadow:0 0 0 35px rgba(111,16,40,.035),0 0 0 75px rgba(111,16,40,.025);opacity:var(--site-decoration-opacity);pointer-events:none; }
+.eyebrow { color:var(--site-primary);font-size:.76rem;letter-spacing:2px;text-transform:uppercase;font-weight:850; }
+h1,h2,h3 { font-family:var(--site-font-heading); }
+h1 { font-size:calc(clamp(2.7rem,6vw,5rem) * var(--site-heading-scale));line-height:1.03;max-width:760px;margin:15px 0 18px;letter-spacing:-1.8px; }
+.hero p { max-width:600px;line-height:1.7;color:#623D47;font-size:1.04rem; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;margin-top:28px; }
+.btn-primary,.btn-outline { border-radius:10px;padding:13px 19px;font-weight:750;border:1px solid var(--site-primary); }
+.btn-primary { background:var(--site-primary);color:#fff; }
+.btn-outline { background:transparent;color:var(--site-primary); }
+main { max-width:1180px;margin:auto;padding:45px 22px 75px; }
+.section-head { display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:22px; }
+.section-head h2 { font-size:calc(2rem * var(--site-heading-scale));margin:7px 0 0; }
+.muted { color:light-dark(#806A70,#C4AEB5);font-size:.91rem;line-height:1.55; }
+.stats { display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:0 0 45px; }
+.stat { border:1px solid light-dark(#EBDCE0,#49343B);border-radius:14px;padding:19px;background:light-dark(#fff,#2C2024); }
+.stat strong { display:block;font-family:var(--site-font-heading);font-size:1.8rem;color:var(--site-primary); }
+.stat span { font-size:.84rem;color:light-dark(#806A70,#C4AEB5); }
+.tabs { display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px; }
+.tab { border:1px solid light-dark(#E5CDD4,#59414A);background:transparent;color:inherit;border-radius:999px;padding:10px 16px;font-weight:700;font-size:.88rem; }
+.tab.active { background:var(--site-primary);color:#fff;border-color:var(--site-primary); }
+.panel { display:none; }
+.panel.active { display:block; }
+.grid-two { display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:start; }
+.card { background:light-dark(#fff,#2C2024);border:1px solid light-dark(#EBDCE0,#49343B);border-radius:16px;padding:22px;box-shadow:0 8px 24px rgba(60,15,30,.045); }
+.card h3 { margin:0 0 6px;font-size:1.35rem; }
+.fields { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px; }
+.field { display:flex;flex-direction:column;gap:7px; }
+.field.full { grid-column:1/-1; }
+label { font-size:.82rem;font-weight:750;color:light-dark(#583943,#E7D5DA); }
+input,select,textarea { width:100%;border:1px solid light-dark(#E4D2D8,#5A414A);border-radius:9px;padding:11px 12px;background:light-dark(#FFFCFD,#21191C);color:inherit;outline:none; }
+input:focus,select:focus,textarea:focus { border-color:var(--site-primary);box-shadow:0 0 0 3px rgba(111,16,40,.12); }
+textarea { min-height:85px;resize:vertical; }
+.facility-list { display:grid;gap:10px;margin-top:15px; }
+.facility { display:flex;gap:12px;align-items:center;padding:13px;border:1px solid light-dark(#EBDCE0,#49343B);border-radius:11px; }
+.facility .symbol { width:42px;height:42px;border-radius:11px;background:var(--site-secondary);color:var(--site-primary);display:grid;place-items:center;font-size:20px; }
+.facility strong { display:block;font-size:.94rem; }
+.facility small { color:light-dark(#806A70,#C4AEB5); }
+.facility input { width:auto;margin-left:auto;accent-color:var(--site-primary); }
+.calendar-top { display:flex;justify-content:space-between;align-items:center;margin:15px 0; }
+.calendar-top button { border:1px solid light-dark(#E4D2D8,#5A414A);background:transparent;color:inherit;border-radius:8px;padding:7px 11px; }
+.calendar-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:5px; }
+.day-name,.day { text-align:center;padding:10px 3px;font-size:.82rem; }
+.day-name { font-weight:800;color:light-dark(#806A70,#C4AEB5); }
+.day { border-radius:8px;border:1px solid transparent; }
+.day.available { background:light-dark(#F8EEF1,#38262D); }
+.day.selected { background:var(--site-primary);color:white;font-weight:800; }
+.day.busy { color:#B7A6AA;text-decoration:line-through;background:light-dark(#F2ECEE,#30272A); }
+.legend { display:flex;gap:15px;flex-wrap:wrap;margin-top:14px;font-size:.78rem;color:light-dark(#806A70,#C4AEB5); }
+.dot { display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;background:#EBDCE0; }
+.dot.picked { background:var(--site-primary); }.dot.booked { background:#A99BA0; }
+.equip-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:17px; }
+.equip-item { display:flex;align-items:center;gap:10px;border:1px solid light-dark(#EBDCE0,#49343B);padding:12px;border-radius:10px; }
+.equip-item input { width:auto;accent-color:var(--site-primary); }
+.equip-item span { flex:1;font-size:.9rem;font-weight:650; }
+.equip-item input[type=number] { width:65px;padding:7px; }
+.contact-box { background:var(--site-secondary);color:var(--site-on-secondary);border-radius:14px;padding:19px;margin-top:17px; }
+.contact-box strong { color:var(--site-primary); }
+.contact-box p { margin:8px 0;font-size:.9rem;line-height:1.6; }
+.progress { height:8px;background:light-dark(#F0E3E7,#4A343C);border-radius:20px;overflow:hidden;margin-top:12px; }
+.progress > div { height:100%;background:var(--site-primary);width:0%;transition:width .2s; }
+.summary-list { display:grid;gap:10px;margin-top:15px;font-size:.9rem; }
+.summary-list div { display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid light-dark(#F0E3E7,#49343B);padding-bottom:9px; }
+.summary-list span:last-child { font-weight:750;text-align:right; }
+.notice { display:none;margin-top:14px;padding:12px;border-radius:9px;background:#E6F4EA;color:#1D6533;font-size:.9rem; }
+.venue-workspace { margin:24px 0 34px; }
+.venue-cards { display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:16px 0; }
+.venue-choice { text-align:left;border:1px solid light-dark(#EBDCE0,#49343B);border-radius:13px;padding:15px;background:light-dark(#fff,#2C2024);color:inherit; }
+.venue-choice.active { border:2px solid var(--site-primary);background:var(--site-secondary);color:var(--site-on-secondary); }
+.venue-choice strong,.venue-choice small { display:block; }.venue-choice small { margin-top:5px;opacity:.78;line-height:1.4; }
+.venue-detail-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:15px; }
+.venue-detail { border:1px solid light-dark(#EBDCE0,#49343B);border-radius:13px;padding:17px;background:light-dark(#fff,#2C2024); }
+.venue-detail h4 { margin:0 0 9px;color:var(--site-primary); }.venue-detail p,.venue-detail li { font-size:.88rem;line-height:1.55; }
+.venue-detail ul { padding-left:19px;margin:8px 0; }.venue-detail input[type=file] { padding:8px; }
+.venue-contact-row { padding:9px 0;border-bottom:1px solid light-dark(#F0E3E7,#49343B);font-size:.88rem;line-height:1.45; }
+.venue-contact-row:last-child { border:0; }
+.office-status-list { display:grid;gap:12px;margin-top:16px; }
+.office-status { display:grid;grid-template-columns:1fr minmax(130px,190px);gap:12px;align-items:center;padding:13px;border:1px solid light-dark(#EBDCE0,#49343B);border-radius:11px; }
+.office-status strong { display:block;font-size:.92rem; }
+.office-status small { color:light-dark(#806A70,#C4AEB5); }
+.status-note { margin-top:14px;padding:12px;border-radius:9px;background:var(--site-secondary);color:var(--site-on-secondary);font-size:.88rem;line-height:1.5; }
+footer { background:var(--site-primary);color:#fff;padding:28px clamp(20px,6vw,80px);display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;font-size:.85rem; }
+@media(max-width:760px){.nav-links{display:none}.grid-two{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.equip-grid{grid-template-columns:1fr}.section-head{align-items:start;flex-direction:column}.venue-detail-grid{grid-template-columns:1fr}.office-status{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app">
+  <nav class="nav">
+    <div class="nav-brand-wrap"><div class="university-brand"><img class="university-seal" src="data:image/jpeg;base64,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" alt="Official University of Batangas seal"><div class="university-name"><strong>UNIVERSITY OF BATANGAS</strong><small>OFFICIAL EVENT SERVICES</small></div></div><div class="nav-divider"></div><div class="brand"><div class="brand-mark">E</div> EventEase</div></div>
+    <div class="nav-links"><a href="#facilities">Facilities</a><a href="#booking">Reservations</a><a href="#equipment">Equipment rental</a><a href="#contact">Contact</a></div>
+    <button class="nav-cta" onclick="showTab('booking')">Book an event</button>
+  </nav>
+  <header class="hero">
+    <div class="eyebrow">Plan · Reserve · Celebrate</div>
+    <h1>Make every event<br>come together.</h1>
+    <p>Find the right venue, reserve your event date, and rent the equipment you need — all in one convenient place.</p>
+    <div class="hero-actions"><button class="btn-primary" onclick="showTab('booking')">Reserve a facility →</button><button class="btn-outline" onclick="showTab('equipment')">Explore equipment</button></div>
+  </header>
+  <main>
+    <div class="stats">
+      <div class="stat"><strong>All-in-one</strong><span>Venue reservation and equipment rental</span></div>
+      <div class="stat"><strong>Easy</strong><span>Simple forms and calendar date selection</span></div>
+      <div class="stat"><strong>Organized</strong><span>Know who to contact before your event</span></div>
+    </div>
+    <div class="section-head" id="facilities"><div><div class="eyebrow">Your event, your space</div><h2>Start planning here</h2></div><p class="muted">Choose a venue to view its schedule, equipment, approval documents, and assigned offices.</p></div>
+    <section class="venue-workspace" aria-labelledby="venueWorkspaceTitle"><div class="eyebrow">Venue information hub</div><h2 id="venueWorkspaceTitle">Everything you need, by venue</h2><p class="muted">Choose a UBLC venue to see its weekday schedule, equipment checklist, approval documents, and the required coordination sequence.</p><div class="venue-cards" id="venueCards"><button type="button" class="venue-choice active" data-venue="Multipurpose Hall" onclick="selectVenue('Multipurpose Hall')"><strong>🏛️ Multipurpose Hall</strong><small>Programs, seminars and university events</small></button><button type="button" class="venue-choice" data-venue="Tiered Hall" onclick="selectVenue('Tiered Hall')"><strong>🎓 Tiered Hall</strong><small>Lectures, presentations and forums</small></button><button type="button" class="venue-choice" data-venue="Gymnasium" onclick="selectVenue('Gymnasium')"><strong>🏀 Gymnasium</strong><small>Sports, assemblies and large events</small></button></div><div class="card"><div class="section-head"><div><div class="eyebrow">Selected venue</div><h3 id="venueName">Multipurpose Hall</h3></div><span class="badge">Venue guide</span></div><div class="venue-detail-grid"><div class="venue-detail"><h4>📅 Schedule and time</h4><p id="venueSchedule">Monday to Friday, 7:00 AM–5:00 PM. Select a date and requested start/end time in the reservation form. MAGS must confirm the actual available schedule.</p><p><strong>Available days:</strong> Monday–Friday</p><p><strong>Operating hours:</strong> 7:00 AM–5:00 PM</p><p><strong>Requested time:</strong> Choose a start and end time within operating hours; final slot is subject to MAGS confirmation.</p></div><div class="venue-detail"><h4>🎤 Equipment rentals for this venue</h4><ul id="venueEquipment"><li>Sound system and speakers</li><li>Microphones</li><li>Lights</li><li>LED wall</li><li>Chairs and tables</li></ul><p class="muted">Indicate quantities in the equipment rental checklist. Stock and availability must be confirmed by the assigned personnel.</p></div><div class="venue-detail"><h4>📄 Letters of approval and documents</h4><p>Upload the event proposal, request letter, approval letter, and other supporting documents required for this venue.</p><label for="approvalUpload">Insert approval / supporting documents</label><input id="approvalUpload" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" multiple><p class="muted" id="approvalFileNames">No files selected. Prototype only: selected files are not stored or sent to UBLC.</p></div><div class="venue-detail"><h4>👥 Coordination sequence and forms</h4><div class="venue-contact-row"><strong>1. MAGS – First step</strong><br>Start here to ask about venue schedule, availability, setup requirements, and facility use. Complete the MAGS coordination form first.</div><div class="venue-contact-row"><strong>2. Registrar – Academic coordination</strong><br>After MAGS, coordinate academic calendar/class schedule concerns and submit any required registrar form or clearance.</div><div class="venue-contact-row"><strong>3. Guard / Security – Event access</strong><br>Coordinate guest/visitor entry, gate access, vehicle arrangements, and security requirements using the security form.</div><p class="muted">Forms below are planning templates. Confirm official UBLC requirements, signatories, and office contacts before use.</p><div class="field"><label for="magsForm">MAGS coordination / venue request form</label><textarea id="magsForm" placeholder="Event title, requested date (Monday–Friday), time, venue setup, and concerns..."></textarea></div><div class="field" style="margin-top:10px"><label for="registrarForm">Registrar coordination form</label><textarea id="registrarForm" placeholder="Academic schedule concerns, class impact, and registrar requirements..."></textarea></div><div class="field" style="margin-top:10px"><label for="guardForm">Guard / Security coordination form</label><textarea id="guardForm" placeholder="Expected guests, entry time, vehicle details, and security needs..."></textarea></div></div></div><p class="muted" style="margin-top:12px">The Monday–Friday, 7:00 AM–5:00 PM schedule and coordination order are prototype settings. Confirm actual hours, availability, office responsibilities, and approval procedures with UBLC before relying on them.</p></div></section>
+    <div class="tabs">
+      <button class="tab active" data-tab="booking" onclick="showTab('booking')">01 · Facility reservation</button>
+      <button class="tab" data-tab="equipment" onclick="showTab('equipment')">02 · Equipment rental</button>
+      <button class="tab" data-tab="coordination" onclick="showTab('coordination')">03 · Coordination</button>
+      <button class="tab" data-tab="status" onclick="showTab('status')">04 · Check reservation</button>
+      <button class="tab" type="button" onclick="toggleChat()">✦ AI help desk</button>
+    </div>
+    <section class="panel active" id="booking">
+      <div class="grid-two">
+        <div class="card">
+          <h3>Reserve an event facility</h3><p class="muted">Enter your event details and select an available date.</p>
+          <form id="bookingForm">
+            <div class="fields">
+              <div class="field full"><label for="facility">Name of event facility</label><select id="facility" required><option value="">Select a facility</option><option>Multipurpose Hall</option><option>Tiered Hall</option><option>Gymnasium</option></select></div>
+              <div class="field"><label for="organizer">Organizer / Contact person</label><input id="organizer" placeholder="Full name" required></div>
+              <div class="field"><label for="email">Email address</label><input id="email" type="email" placeholder="name@email.com" required></div>
+              <div class="field"><label for="eventName">Event name</label><input id="eventName" placeholder="e.g. Seminar" required></div>
+              <div class="field"><label for="guests">Expected attendees</label><input id="guests" type="number" min="1" placeholder="e.g. 100" required></div>
+              <div class="field"><label for="startTime">Start time (7:00 AM–5:00 PM)</label><input id="startTime" type="time" min="07:00" max="17:00" required></div>
+              <div class="field"><label for="endTime">End time (within operating hours)</label><input id="endTime" type="time" min="07:00" max="17:00" required></div>
+              <div class="field full"><label for="purpose">Event description / special requests</label><textarea id="purpose" placeholder="Tell us about your event or setup requirements..."></textarea></div>
+            </div>
+            <button class="btn-primary" style="margin-top:18px;width:100%" type="submit">Submit reservation request</button>
+            <div class="notice" id="bookingNotice">Your sample reservation request has been prepared! This prototype does not send or store bookings.</div>
+          </form>
+        </div>
+        <div class="card">
+          <h3>Interactive availability calendar</h3><p class="muted">Choose a date to add it to your reservation form.</p>
+          <div class="calendar-top"><button onclick="changeMonth(-1)" aria-label="Previous month">←</button><strong id="monthLabel"></strong><button onclick="changeMonth(1)" aria-label="Next month">→</button></div>
+          <div class="calendar-grid" id="calendar"></div>
+          <div class="legend"><span><i class="dot picked"></i>Selected date</span><span><i class="dot"></i>Weekday (availability to be confirmed)</span><span><i class="dot booked"></i>Weekend / unavailable</span></div>
+          <div class="contact-box"><strong>Selected date</strong><p id="selectedDate">No date selected yet.</p><p class="muted">Availability shown is for demonstration only. Final confirmation should come from the facility administrator.</p></div>
+          <div class="lookup-box"><h4>Check facility availability</h4><p class="muted">Check whether a facility already has a reservation for your selected date and time.</p><div class="lookup-controls"><input id="checkDate" type="date" aria-label="Date to check"><button class="btn-primary" type="button" onclick="checkAvailability()">Check</button></div><div class="lookup-result" id="availabilityResult" aria-live="polite">Choose a facility and date to check saved prototype reservations.</div></div>
+          <div class="lookup-box"><h4>Track your reservation</h4><p class="muted">Enter the reference number shown after submitting a request.</p><div class="lookup-controls"><input id="referenceLookup" placeholder="e.g. UB-ABC123" aria-label="Reservation reference"><button class="btn-primary" type="button" onclick="lookupReservation()">Find</button></div><div class="lookup-result" id="referenceResult" aria-live="polite"></div></div>
+        </div>
+      </div>
+    </section>
+    <section class="panel" id="equipment">
+      <div class="grid-two">
+        <div class="card">
+          <h3>Equipment checklist</h3><p class="muted">Tick the items you need and indicate the quantity.</p>
+          <div class="equip-grid" id="equipmentList"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px"><strong id="equipmentCount">0 items selected</strong><button class="btn-outline" onclick="clearEquipment()">Clear checklist</button></div>
+          <div class="progress"><div id="equipmentProgress"></div></div>
+        </div>
+        <div class="card">
+          <h3>Rental request details</h3><p class="muted">Provide the details needed to prepare your equipment.</p>
+          <div class="fields">
+            <div class="field full"><label for="rentName">Name / Organization</label><input id="rentName" placeholder="Full name or organization"></div>
+            <div class="field"><label for="rentDate">Date needed</label><input id="rentDate" type="date"></div>
+            <div class="field"><label for="deliveryTime">Setup time</label><input id="deliveryTime" type="time"></div>
+            <div class="field full"><label for="rentNotes">Additional instructions</label><textarea id="rentNotes" placeholder="Venue, setup preferences, or other requests..."></textarea></div>
+          </div>
+          <div class="summary-list" id="rentalSummary"><div><span>Selected equipment</span><span>None yet</span></div></div>
+          <button class="btn-primary" style="width:100%;margin-top:17px" onclick="submitRental()">Submit equipment request</button>
+          <div class="notice" id="rentalNotice">Your sample equipment request has been prepared! Please coordinate with the assigned staff.</div>
+        </div>
+      </div>
+    </section>
+    <section class="panel" id="coordination">
+      <div class="grid-two">
+        <div class="card" id="contact">
+          <h3>Who should you coordinate with?</h3><p class="muted">Use this sample contact directory to know who handles each part of your event.</p>
+          <div class="facility-list">
+            <div class="facility"><div class="symbol">🏛️</div><div><strong>Facility Administrator</strong><small>Venue availability, approval, access and rules</small></div></div>
+            <div class="facility"><div class="symbol">🎛️</div><div><strong>Technical / AV Coordinator</strong><small>Lights, sound system, microphones and testing</small></div></div>
+            <div class="facility"><div class="symbol">🪑</div><div><strong>Logistics / Equipment Staff</strong><small>Chairs, tables, delivery, setup and return</small></div></div>
+            <div class="facility"><div class="symbol">🧾</div><div><strong>Events Office</strong><small>Reservation confirmation, documents and payment guidance</small></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Before your event checklist</h3><p class="muted">Keep your preparations organized.</p>
+          <div class="facility-list" id="prepChecklist">
+            <label class="facility"><input type="checkbox"> Reservation request submitted</label>
+            <label class="facility"><input type="checkbox"> Facility booking confirmed</label>
+            <label class="facility"><input type="checkbox"> Equipment list finalized</label>
+            <label class="facility"><input type="checkbox"> Coordinated with technical staff</label>
+            <label class="facility"><input type="checkbox"> Setup schedule confirmed</label>
+            <label class="facility"><input type="checkbox"> Equipment tested before the event</label>
+            <label class="facility"><input type="checkbox"> Return procedure confirmed</label>
+          </div>
+          <div class="contact-box"><strong>Reminder</strong><p>Contact the facility administrator and equipment coordinator before your event date to confirm availability, setup time, and collection or return arrangements.</p></div>
+        </div>
+      </div>
+    </section>
+    <section class="panel" id="status">
+      <div class="card">
+        <h3>Reservation approval status</h3><p class="muted">Track each office's progress for your selected venue. Update the status as you receive confirmation.</p>
+        <div class="office-status-list">
+          <label class="office-status"><span><strong>1. MAGS</strong><small>Venue schedule, availability, and setup</small></span><select id="magsStatus"><option>Pending</option><option>For review</option><option>Approved</option><option>Needs revision</option><option>Rejected</option></select></label>
+          <label class="office-status"><span><strong>2. Registrar</strong><small>Academic schedule and class coordination</small></span><select id="registrarStatus"><option>Pending</option><option>For review</option><option>Approved</option><option>Needs revision</option><option>Rejected</option></select></label>
+          <label class="office-status"><span><strong>3. Guard / Security</strong><small>Guest access, gate entry, and security</small></span><select id="guardStatus"><option>Pending</option><option>For review</option><option>Approved</option><option>Needs revision</option><option>Rejected</option></select></label>
+        </div>
+        <p class="status-note">These are manual tracking fields for the prototype only. Changing a status does not notify an office or confirm an official UBLC approval.</p>
+      </div>
+    </section>
+  </main>
+  <footer><strong>EventEase</strong><span>One platform for your venue and event equipment needs.</span><span>Prototype demonstration · 2026</span></footer>
+  <button class="chat-launch" type="button" onclick="toggleChat()">✦ Ask EventEase AI</button>
+  <aside class="chat-panel" id="chatPanel" aria-label="EventEase assistant"><div class="chat-head"><strong>✦ EventEase Assistant</strong><button type="button" onclick="toggleChat()" aria-label="Close chat">×</button></div><div class="chat-messages" id="chatMessages"><div class="chat-bubble">Hi! I'm the EventEase demo assistant. Ask me about reservations, equipment rentals, availability checks, or event coordination.</div></div><form class="chat-form" id="chatForm"><input id="chatInput" placeholder="Ask a question..." autocomplete="off" required><button type="submit">Send</button></form></aside>
+</div>
+<script>
+const venueGuides={'Multipurpose Hall':{schedule:'Monday to Friday, 7:00 AM–5:00 PM. Select your requested start and end time within these hours; MAGS must confirm the actual available slot before the reservation is approved.',equipment:['Sound system and speakers','Microphones','Lights','LED wall','Chairs and tables']},'Tiered Hall':{schedule:'Monday to Friday, 7:00 AM–5:00 PM. Select your requested start and end time within these hours; MAGS must confirm the actual available slot before the reservation is approved.',equipment:['Sound system','Wireless microphones','Projector / LED display','Stage lights','Lectern / podium','Tiered seating']},'Gymnasium':{schedule:'Monday to Friday, 7:00 AM–5:00 PM. Select your requested start and end time within these hours; MAGS must confirm the actual available slot before the reservation is approved.',equipment:['Sound system and speakers','Wireless microphones','LED wall / scoreboard (if available)','Event lights','Chairs and tables','Sports / activity equipment']}};
+function selectVenue(name){const guide=venueGuides[name];if(!guide)return;document.getElementById('venueName').textContent=name;document.getElementById('venueSchedule').textContent=guide.schedule;document.getElementById('venueEquipment').innerHTML=guide.equipment.map(x=>'<li>'+x+'</li>').join('');document.querySelectorAll('.venue-choice').forEach(b=>b.classList.toggle('active',b.dataset.venue===name));const facility=document.getElementById('facility');if(facility)facility.value=name;}
+document.getElementById('approvalUpload').addEventListener('change',e=>{const files=[...e.target.files].map(f=>f.name);document.getElementById('approvalFileNames').textContent=files.length?'Selected: '+files.join(', ')+'. Files are only selected in this browser prototype; submit them through the official UB process.':'No files selected.'});
+selectVenue('Multipurpose Hall');
+const tabs = ['booking','equipment','coordination','status'];
+function showTab(id){tabs.forEach(t=>{document.getElementById(t).classList.toggle('active',t===id);document.querySelector('[data-tab="'+t+'"]')?.classList.toggle('active',t===id)});document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});}
+let viewDate = new Date(); viewDate.setDate(1); let selected = null;
+const reservationStoreKey='eventease_ub_reservations';
+function getReservations(){try{return JSON.parse(localStorage.getItem(reservationStoreKey)||'[]')}catch(e){return []}}
+function saveReservations(rows){localStorage.setItem(reservationStoreKey,JSON.stringify(rows))}
+function makeReference(){return 'UB-'+Math.random().toString(36).slice(2,8).toUpperCase()}
+function timeOverlap(aStart,aEnd,bStart,bEnd){return aStart<bEnd&&bStart<aEnd}
+function checkAvailability(){const facility=document.getElementById('facility').value,date=document.getElementById('checkDate').value,start=document.getElementById('startTime').value,end=document.getElementById('endTime').value,result=document.getElementById('availabilityResult');if(!facility||!date){result.textContent='Please choose a facility and date first.';return}const conflicts=getReservations().filter(r=>r.facility===facility&&r.date===date&&(!start||!end||timeOverlap(start,end,r.startTime,r.endTime)));result.textContent=conflicts.length?'⚠ Existing reservation found for '+facility+' on '+date+'. Please choose another time or coordinate with the Facility Administrator.':'✓ No matching reservation is recorded in this browser prototype for '+facility+' on '+date+'. This is not an official confirmation.'}
+function lookupReservation(){const ref=document.getElementById('referenceLookup').value.trim().toUpperCase(),r=getReservations().find(x=>x.reference===ref),out=document.getElementById('referenceResult');out.textContent=r?'Reference '+r.reference+' · '+r.eventName+' · '+r.facility+' · '+r.date+' · Status: Pending review.':'No matching reference found in this browser prototype.'}
+function renderCalendar(){
+ const y=viewDate.getFullYear(),m=viewDate.getMonth(); document.getElementById('monthLabel').textContent=viewDate.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+ const root=document.getElementById('calendar');root.innerHTML='';['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d=>{let e=document.createElement('div');e.className='day-name';e.textContent=d;root.appendChild(e)});
+ const offset=new Date(y,m,1).getDay(),total=new Date(y,m+1,0).getDate();for(let i=0;i<offset;i++){let e=document.createElement('div');root.appendChild(e)}
+  for(let d=1;d<=total;d++){let date=new Date(y,m,d),iso=[y,String(m+1).padStart(2,'0'),String(d).padStart(2,'0')].join('-');let e=document.createElement('button');e.className='day available';e.textContent=d;e.type='button';let past=date < new Date(new Date().setHours(0,0,0,0));let weekend=date.getDay()===0||date.getDay()===6;let realBusy=getReservations().some(r=>r.date===iso&&(!document.getElementById('facility').value||r.facility===document.getElementById('facility').value));if(past||weekend||realBusy){e.className='day busy';e.disabled=true;e.title=realBusy?'Has a saved prototype reservation':weekend?'Reservations are limited to Monday–Friday':'Past date'}if(selected===iso)e.classList.add('selected');e.addEventListener('click',()=>{selected=iso;document.getElementById('checkDate').value=iso;document.getElementById('selectedDate').textContent=date.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});renderCalendar()});root.appendChild(e)}
+}
+function changeMonth(n){viewDate.setMonth(viewDate.getMonth()+n);renderCalendar()}renderCalendar();
+document.getElementById('bookingForm').addEventListener('submit',e=>{e.preventDefault();if(!selected){alert('Please select an event date from the calendar.');return}const facility=document.getElementById('facility').value,startTime=document.getElementById('startTime').value,endTime=document.getElementById('endTime').value;const chosenDate=new Date(selected+'T00:00:00');if(chosenDate.getDay()===0||chosenDate.getDay()===6){alert('Reservations are limited to Monday through Friday.');return}if(startTime<'07:00'||endTime>'17:00'||startTime>='17:00'||endTime<='07:00'){alert('Choose a time between 7:00 AM and 5:00 PM.');return}if(endTime<=startTime){alert('End time must be later than start time.');return}if(getReservations().some(r=>r.facility===facility&&r.date===selected&&timeOverlap(startTime,endTime,r.startTime,r.endTime))){alert('This facility already has a reservation during that time. Please check availability.');return}const booking={reference:makeReference(),facility,date:selected,startTime,endTime,organizer:document.getElementById('organizer').value,email:document.getElementById('email').value,eventName:document.getElementById('eventName').value,guests:document.getElementById('guests').value,status:'Pending review'};saveReservations([...getReservations(),booking]);document.getElementById('bookingNotice').textContent='Request saved in this browser. Your reference number is '+booking.reference+'. Status: Pending review. This is not an official university confirmation.';document.getElementById('bookingNotice').style.display='block';document.getElementById('referenceLookup').value=booking.reference;document.getElementById('referenceResult').textContent='Reference '+booking.reference+' · Status: Pending review.';renderCalendar()});
+document.getElementById('facility').addEventListener('change',renderCalendar);
+const items=[['Sound system','🔊'],['Wireless microphones','🎤'],['Stage lights','💡'],['Projector','📽️'],['Speakers','📢'],['Chairs','🪑'],['Tables','▤'],['Extension cords','🔌'],['Podium / Lectern','🎙️'],['Backdrop / Stand','🖼️']];
+const list=document.getElementById('equipmentList');items.forEach(([name,icon],i)=>{let label=document.createElement('label');label.className='equip-item';label.innerHTML='<input type="checkbox" data-item="'+name+'"><span>'+icon+' '+name+'</span><input type="number" min="1" value="1" aria-label="Quantity for '+name+'" disabled>';let check=label.querySelector('input[type=checkbox]'),qty=label.querySelector('input[type=number]');check.addEventListener('change',()=>{qty.disabled=!check.checked;updateEquipment()});qty.addEventListener('input',updateEquipment);list.appendChild(label)});
+function updateEquipment(){let selectedItems=[...list.querySelectorAll('.equip-item')].filter(x=>x.querySelector('[type=checkbox]').checked);document.getElementById('equipmentCount').textContent=selectedItems.length+' item type'+(selectedItems.length===1?'':'s')+' selected';document.getElementById('equipmentProgress').style.width=(selectedItems.length/items.length*100)+'%';let summary=document.getElementById('rentalSummary');summary.innerHTML='';let row=document.createElement('div');row.innerHTML='<span>Selected equipment</span><span>'+selectedItems.length+'</span>';summary.appendChild(row);selectedItems.forEach(x=>{let r=document.createElement('div');r.innerHTML='<span>'+x.querySelector('span').textContent.trim()+'</span><span>Qty: '+x.querySelector('[type=number]').value+'</span>';summary.appendChild(r)});if(!selectedItems.length){row.lastElementChild.textContent='None yet'}}
+function clearEquipment(){list.querySelectorAll('.equip-item').forEach(x=>{x.querySelector('[type=checkbox]').checked=false;x.querySelector('[type=number]').disabled=true;x.querySelector('[type=number]').value=1});updateEquipment()}
+function submitRental(){let count=list.querySelectorAll('[type=checkbox]:checked').length;if(!count){alert('Please select at least one equipment item.');return}document.getElementById('rentalNotice').style.display='block'}
+function toggleChat(){document.getElementById('chatPanel').classList.toggle('open');if(document.getElementById('chatPanel').classList.contains('open'))document.getElementById('chatInput').focus()}
+function addChatMessage(message,who){const bubble=document.createElement('div');bubble.className='chat-bubble'+(who==='user'?' user':'');bubble.textContent=message;const area=document.getElementById('chatMessages');area.appendChild(bubble);area.scrollTop=area.scrollHeight}
+function assistantReply(q){const s=q.toLowerCase();if(s.includes('reserve')||s.includes('book'))return 'To reserve a facility, open Facility Reservation, choose a venue, fill in your event details, select a calendar date, and submit your request. Your request will be marked Pending review in this demo.';if(s.includes('available')||s.includes('availability')||s.includes('date'))return 'Choose a facility and date in Check Facility Availability. The demo checks reservations saved in this browser only; confirm the final schedule with the Facility Administrator.';if(s.includes('status')||s.includes('track')||s.includes('reference'))return 'After submitting a reservation, copy your UB reference number. Enter it in Track Your Reservation to view the saved request status.';if(s.includes('equipment')||s.includes('microphone')||s.includes('chair')||s.includes('table')||s.includes('sound'))return 'Open Equipment Rental, tick the equipment you need, set quantities, then submit your request. Coordinate setup and return details with the Logistics / Equipment Staff.';if(s.includes('contact')||s.includes('coordinate')||s.includes('staff'))return 'For venue approval, contact the Facility Administrator. For lights and sound, contact the Technical / AV Coordinator. For chairs, tables, setup, and returns, contact Logistics / Equipment Staff.';return 'I can guide you with facility reservations, checking dates, tracking a reference number, equipment rentals, and event coordination. What would you like to know?'}
+document.getElementById('chatForm').addEventListener('submit',e=>{e.preventDefault();const input=document.getElementById('chatInput'),q=input.value.trim();if(!q)return;addChatMessage(q,'user');input.value='';addChatMessage(assistantReply(q),'assistant')});
+</script>
+</body>
+</html>
